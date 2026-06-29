@@ -1,0 +1,81 @@
+{
+  "name": "rns-prime-pos",
+  "productName": "RNSPrimePOS",
+  "private": true,
+  "version": "0.0.1",
+  "type": "module",
+  "main": "dist-electron/main.js",
+  "scripts": {
+    "electron:dev": "vite",
+    "electron:build": "vite build && electron-builder",
+    "dev": "vite",
+    "build": "vite build",
+    "typecheck": "vue-tsc --noEmit",
+    "preview": "vite preview",
+    "test": "npx playwright test",
+    "test:v15": "npx playwright test --project=v15",
+    "test:v14": "npx playwright test --project=v14",
+    "test:v16": "npx playwright test --project=v16",
+    "test:report": "npx playwright show-report"
+  },
+  "dependencies": {
+    "@capacitor/android": "^8.4.1",
+    "@capacitor/core": "^8.4.1",
+    "@capacitor/status-bar": "^8.0.2",
+    "@capgo/capacitor-updater": "^8.50.1",
+    "@tanstack/vue-virtual": "^3.13.21",
+    "dexie": "^4.4.4",
+    "electron-updater": "^6.8.9",
+    "engine.io-client": "^6.6.6",
+    "frappe-ui": "^0.1.60",
+    "fuse.js": "^7.1.0",
+    "highlight.js": "^11.11.1",
+    "html2canvas": "^1.4.1",
+    "html5-qrcode": "^2.3.8",
+    "interactjs": "^1.10.27",
+    "jspdf": "^4.2.0",
+    "lucide-vue-next": "^0.344.0",
+    "pinia": "^2.1.7",
+    "showdown": "^2.1.0",
+    "vue": "^3.4.15",
+    "vue-router": "^4.2.5"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "^8.4.1",
+    "@iconify/json": "^2.2.445",
+    "@playwright/test": "^1.58.2",
+    "@types/node": "^25.3.5",
+    "@vitejs/plugin-vue": "^5.0.3",
+    "autoprefixer": "^10.4.17",
+    "electron": "^42.4.1",
+    "electron-builder": "^26.15.3",
+    "postcss": "^8.4.33",
+    "tailwindcss": "^3.4.1",
+    "typescript": "^5.3.3",
+    "unplugin-icons": "^23.0.1",
+    "vite": "^5.0.12",
+    "vite-plugin-electron": "^1.0.4",
+    "vite-plugin-electron-renderer": "^1.0.0",
+    "vue-tsc": "^3.2.5"
+  },
+  "build": {
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "dist",
+      "dist-electron"
+    ],
+    "publish": {
+      "provider": "github",
+      "owner": "rnslogic",
+      "repo": "RNSPrimePOS"
+    }
+  },
+  "resolutions": {
+    "tar": "6.2.1"
+  },
+  "overrides": {
+    "tar": "6.2.1"
+  }
+}

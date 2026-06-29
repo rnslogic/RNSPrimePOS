@@ -1,0 +1,2 @@
+import{d as t,c as a,g as n,z as o,o as m}from"./index-Cze5d72D.js";const c=["innerHTML"],p=t({__name:"ErrorMessage",props:{message:{}},setup(s){const e=s,r=o(()=>e.message?e.message instanceof Error?e.message.messages||e.message.message:e.message:"");return(i,g)=>s.message?(m(),a("div",{key:0,class:"whitespace-pre-line text-sm text-ink-red-4",role:"alert",innerHTML:r.value},null,8,c)):n("",!0)}});export{p as _};
+//# sourceMappingURL=ErrorMessage.vue_vue_type_script_setup_true_lang-_S0BbH3t.js.map
