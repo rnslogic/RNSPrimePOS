@@ -264,7 +264,7 @@ async function submitItem() {
 							<label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">{{ __("Item Group") }} <span class="text-red-500">*</span></label>
 							<input
 								v-model="form.item_group"
-								@focus="showGroupDropdown = true; activeGroupIndex = -1"
+								@focus="showGroupDropdown = true; showBrandDropdown = false; activeGroupIndex = -1"
 								@blur="setTimeout(() => showGroupDropdown = false, 200)"
 								@keydown="handleGroupKeydown"
 								type="text"
@@ -292,7 +292,7 @@ async function submitItem() {
 							<label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">{{ __("Brand") }}</label>
 							<input
 								v-model="form.brand"
-								@focus="showBrandDropdown = true; activeBrandIndex = -1"
+								@focus="showBrandDropdown = true; showGroupDropdown = false; activeBrandIndex = -1"
 								@blur="setTimeout(() => showBrandDropdown = false, 200)"
 								@keydown="handleBrandKeydown"
 								type="text"
