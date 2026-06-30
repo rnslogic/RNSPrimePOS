@@ -68,6 +68,18 @@ function handleGroupKeydown(e: KeyboardEvent) {
 	}
 }
 
+function handleGroupBlur() {
+	setTimeout(() => {
+		showGroupDropdown.value = false;
+	}, 200);
+}
+
+function handleBrandBlur() {
+	setTimeout(() => {
+		showBrandDropdown.value = false;
+	}, 200);
+}
+
 function handleBrandKeydown(e: KeyboardEvent) {
 	if (!showBrandDropdown.value) return;
 	if (e.key === 'ArrowDown') {
@@ -265,7 +277,7 @@ async function submitItem() {
 							<input
 								v-model="form.item_group"
 								@focus="showGroupDropdown = true; showBrandDropdown = false; activeGroupIndex = -1"
-								@blur="setTimeout(() => showGroupDropdown = false, 200)"
+								@blur="handleGroupBlur"
 								@keydown="handleGroupKeydown"
 								type="text"
 								class="bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 text-gray-900 dark:text-white text-sm rounded-xl focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 block w-full p-3 transition-colors"
@@ -293,7 +305,7 @@ async function submitItem() {
 							<input
 								v-model="form.brand"
 								@focus="showBrandDropdown = true; showGroupDropdown = false; activeBrandIndex = -1"
-								@blur="setTimeout(() => showBrandDropdown = false, 200)"
+								@blur="handleBrandBlur"
 								@keydown="handleBrandKeydown"
 								type="text"
 								class="bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 text-gray-900 dark:text-white text-sm rounded-xl focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 block w-full p-3 transition-colors"
