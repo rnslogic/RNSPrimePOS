@@ -27,6 +27,62 @@ onMounted(async () => {
 	}
 });
 
+const showGroupDropdown = ref(false);
+const activeGroupIndex = ref(-1);
+const filteredGroups = computed(() => {
+	const q = form.value.item_group.toLowerCase();
+	return itemGroups.value.filter(g => g.name.toLowerCase().includes(q));
+});
+
+const showBrandDropdown = ref(false);
+const activeBrandIndex = ref(-1);
+const filteredBrands = computed(() => {
+	const q = form.value.brand.toLowerCase();
+	return brands.value.filter(b => b.name.toLowerCase().includes(q));
+});
+
+function selectGroup(name: string) {
+	form.value.item_group = name;
+	showGroupDropdown.value = false;
+	activeGroupIndex.value = -1;
+}
+
+function selectBrand(name: string) {
+	form.value.brand = name;
+	showBrandDropdown.value = false;
+	activeBrandIndex.value = -1;
+}
+
+function handleGroupKeydown(e: KeyboardEvent) {
+	if (!showGroupDropdown.value) return;
+	if (e.key === 'ArrowDown') {
+		e.preventDefault();
+		if (activeGroupIndex.value < filteredGroups.value.length - 1) activeGroupIndex.value++;
+	} else if (e.key === 'ArrowUp') {
+		e.preventDefault();
+		if (activeGroupIndex.value > 0) activeGroupIndex.value--;
+	} else if (e.key === 'Enter' && activeGroupIndex.value >= 0) {
+		e.preventDefault();
+		const grp = filteredGroups.value[activeGroupIndex.value];
+		if (grp) selectGroup(grp.name);
+	}
+}
+
+function handleBrandKeydown(e: KeyboardEvent) {
+	if (!showBrandDropdown.value) return;
+	if (e.key === 'ArrowDown') {
+		e.preventDefault();
+		if (activeBrandIndex.value < filteredBrands.value.length - 1) activeBrandIndex.value++;
+	} else if (e.key === 'ArrowUp') {
+		e.preventDefault();
+		if (activeBrandIndex.value > 0) activeBrandIndex.value--;
+	} else if (e.key === 'Enter' && activeBrandIndex.value >= 0) {
+		e.preventDefault();
+		const brnd = filteredBrands.value[activeBrandIndex.value];
+		if (brnd) selectBrand(brnd.name);
+	}
+}
+
 const form = ref({
 	item_code: "",
 	item_name: "",
@@ -204,33 +260,59 @@ async function submitItem() {
 						</div>
 
 						<!-- Item Group -->
-						<div>
+						<div class="relative">
 							<label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">{{ __("Item Group") }} <span class="text-red-500">*</span></label>
 							<input
 								v-model="form.item_group"
-								list="itemGroupsList"
+								@focus="showGroupDropdown = true; activeGroupIndex = -1"
+								@blur="setTimeout(() => showGroupDropdown = false, 200)"
+								@keydown="handleGroupKeydown"
 								type="text"
 								class="bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 text-gray-900 dark:text-white text-sm rounded-xl focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 block w-full p-3 transition-colors"
 								:placeholder="__('e.g. Mobile')"
 							/>
-							<datalist id="itemGroupsList">
-								<option v-for="group in itemGroups" :key="group.name" :value="group.name"></option>
-							</datalist>
+							<ul
+								v-if="showGroupDropdown && filteredGroups.length > 0"
+								class="absolute z-10 w-full mt-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-lg max-h-60 overflow-y-auto py-1 text-sm text-gray-800 dark:text-gray-200"
+							>
+								<li
+									v-for="(group, index) in filteredGroups"
+									:key="group.name"
+									@mousedown="selectGroup(group.name)"
+									class="px-4 py-2 cursor-pointer transition-colors"
+									:class="index === activeGroupIndex ? 'bg-blue-50 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300' : 'hover:bg-gray-50 dark:hover:bg-gray-700/50'"
+								>
+									{{ group.name }}
+								</li>
+							</ul>
 						</div>
 
 						<!-- Brand -->
-						<div>
+						<div class="relative">
 							<label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">{{ __("Brand") }}</label>
 							<input
 								v-model="form.brand"
-								list="brandsList"
+								@focus="showBrandDropdown = true; activeBrandIndex = -1"
+								@blur="setTimeout(() => showBrandDropdown = false, 200)"
+								@keydown="handleBrandKeydown"
 								type="text"
 								class="bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 text-gray-900 dark:text-white text-sm rounded-xl focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 block w-full p-3 transition-colors"
 								:placeholder="__('e.g. Google')"
 							/>
-							<datalist id="brandsList">
-								<option v-for="brand in brands" :key="brand.name" :value="brand.name"></option>
-							</datalist>
+							<ul
+								v-if="showBrandDropdown && filteredBrands.length > 0"
+								class="absolute z-10 w-full mt-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-lg max-h-60 overflow-y-auto py-1 text-sm text-gray-800 dark:text-gray-200"
+							>
+								<li
+									v-for="(brand, index) in filteredBrands"
+									:key="brand.name"
+									@mousedown="selectBrand(brand.name)"
+									class="px-4 py-2 cursor-pointer transition-colors"
+									:class="index === activeBrandIndex ? 'bg-blue-50 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300' : 'hover:bg-gray-50 dark:hover:bg-gray-700/50'"
+								>
+									{{ brand.name }}
+								</li>
+							</ul>
 						</div>
 
 						<!-- UOM -->
