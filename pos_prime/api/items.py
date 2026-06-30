@@ -460,10 +460,10 @@ def create_item(item_data, pos_profile=None):
         item.is_stock_item = 1
         
         if item_data.get("purchase_price"):
-            item.valuation_rate = float(item_data.get("purchase_price"))
+            item.valuation_rate = float(str(item_data.get("purchase_price")).replace(",", ""))
             
         if item_data.get("max_discount"):
-            item.max_discount = float(item_data.get("max_discount"))
+            item.max_discount = float(str(item_data.get("max_discount")).replace(",", ""))
             
         item.insert(ignore_permissions=True)
         
@@ -471,10 +471,12 @@ def create_item(item_data, pos_profile=None):
             price = frappe.new_doc("Item Price")
             price.item_code = item.name
             price.price_list = item_data.get("selling_price_list") or "Standard Selling"
-            price.price_list_rate = float(item_data.get("selling_price"))
+            price.price_list_rate = float(str(item_data.get("selling_price")).replace(",", ""))
             price.insert(ignore_permissions=True)
             
         opening_qty = item_data.get("opening_qty")
+        if opening_qty:
+            opening_qty = str(opening_qty).replace(",", "")
         if opening_qty and float(opening_qty) > 0:
             warehouse = None
             company = frappe.defaults.get_user_default("Company") or frappe.db.get_single_value("Global Defaults", "default_company")
@@ -490,13 +492,14 @@ def create_item(item_data, pos_profile=None):
             if warehouse and company:
                 se = frappe.new_doc("Stock Entry")
                 se.purpose = "Material Receipt"
+                se.stock_entry_type = "Material Receipt"
                 se.company = company
                 se.append("items", {
                     "item_code": item.name,
                     "qty": float(opening_qty),
                     "uom": item.stock_uom,
                     "t_warehouse": warehouse,
-                    "basic_rate": float(item_data.get("purchase_price") or 0)
+                    "basic_rate": float(str(item_data.get("purchase_price") or 0).replace(",", ""))
                 })
                 se.insert(ignore_permissions=True)
                 se.submit()
