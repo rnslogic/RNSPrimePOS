@@ -423,9 +423,9 @@ def get_item_groups(pos_profile=""):
     return [g.name for g in groups]
 
 @frappe.whitelist()
-def create_item(item_data):
+def create_item(item_data, pos_profile=None):
     """Create a new item from POS."""
-    validate_pos_access(None)
+    validate_pos_access(pos_profile)
     
     if isinstance(item_data, str):
         import json
@@ -474,6 +474,33 @@ def create_item(item_data):
             price.price_list_rate = float(item_data.get("selling_price"))
             price.insert(ignore_permissions=True)
             
+        opening_qty = item_data.get("opening_qty")
+        if opening_qty and float(opening_qty) > 0:
+            warehouse = None
+            company = frappe.defaults.get_user_default("Company") or frappe.db.get_single_value("Global Defaults", "default_company")
+            
+            if pos_profile:
+                warehouse = frappe.db.get_value("POS Profile", pos_profile, "warehouse")
+                if not company:
+                    company = frappe.db.get_value("POS Profile", pos_profile, "company")
+            
+            if not warehouse and company:
+                warehouse = frappe.db.get_value("Warehouse", {"company": company, "is_group": 0})
+                
+            if warehouse and company:
+                se = frappe.new_doc("Stock Entry")
+                se.purpose = "Material Receipt"
+                se.company = company
+                se.append("items", {
+                    "item_code": item.name,
+                    "qty": float(opening_qty),
+                    "uom": item.stock_uom,
+                    "t_warehouse": warehouse,
+                    "basic_rate": float(item_data.get("purchase_price") or 0)
+                })
+                se.insert(ignore_permissions=True)
+                se.submit()
+
         return item.name
     except Exception as e:
         frappe.log_error(frappe.get_traceback(), "create_item error")
