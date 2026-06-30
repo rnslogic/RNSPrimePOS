@@ -1,29 +1,15 @@
 <!DOCTYPE html>
-{%- set _user_theme = (frappe.db.get_value("User", frappe.session.user, "desk_theme") or "Light").lower() -%}
-{%- set ws = frappe.get_doc("Website Settings") -%}
-<html lang="en" data-theme-mode="{{ _user_theme }}" data-theme="{{ _user_theme }}">
+<html lang="en">
 
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport"
     content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no" />
-  <title>RNS Prime</title>
-  <script type="module" crossorigin src="/assets/pos_prime/frontend/assets/index-Cze5d72D.js"></script>
-  <link rel="stylesheet" crossorigin href="/assets/pos_prime/frontend/assets/index-nkqt7mOx.css">
-  <script>window.csrf_token = "{{ frappe.session.csrf_token }}";</script>
-  <script>
-    (function() {
-      var m = document.documentElement.getAttribute("data-theme-mode");
-      if (m === "automatic") {
-        var q = window.matchMedia("(prefers-color-scheme: dark)");
-        document.documentElement.setAttribute("data-theme", q.matches ? "dark" : "light");
-        q.addEventListener("change", function(e) {
-          document.documentElement.setAttribute("data-theme", e.matches ? "dark" : "light");
-        });
-      }
-    })();
-  </script>
-  </head>
+  <meta name="theme-color" content="#ffffff">
+  <title>RNSPrimePOS</title>
+  <script type="module" crossorigin src="./assets/index-D-vPdle2.js"></script>
+  <link rel="stylesheet" crossorigin href="./assets/index-DP_tRn2S.css">
+</head>
 
 <body>
   <div id="splash-screen" class="app-loader">
@@ -32,6 +18,7 @@
         margin: 0;
         overflow: hidden;
       }
+
       .app-loader {
         position: fixed;
         inset: 0;
@@ -99,8 +86,13 @@
       }
 
       @keyframes loadBar {
-        0% { left: -40%; }
-        100% { left: 100%; }
+        0% {
+          left: -40%;
+        }
+
+        100% {
+          left: 100%;
+        }
       }
 
       .loading-text {
@@ -122,7 +114,7 @@
       </svg>
     </div>
     <div class="brand-name">RNS Prime</div>
-    <div class="brand-tagline">Logic that empowers businesses.</div>
+    <div class="brand-tagline">that empowers businesses.</div>
 
     <div class="loader-section">
       <div class="loading-bar-container">
@@ -142,18 +134,7 @@
       })();
     </script>
   </div>
-  <script>
-    (function() {
-      var p = window.location.pathname.replace(/\/$/, "");
-      var standalone = ["/pos-prime/display", "/pos-prime/kiosk", "/pos-prime/customers"];
-      var isStandalone = standalone.some(function(s) { return p.startsWith(s); });
-      if (!isStandalone && p.startsWith("/pos-prime")) {
-        window.location.replace("{{ desk_prefix }}/pos-terminal");
-        return;
-      }
-    })();
-  </script>
-  <div id="app"></div>
+  <div id="app"></div>
 </body>
 
 </html>
