@@ -101,7 +101,7 @@ def get_items(
         FROM `tabItem` i
         {join_clause}
         WHERE {where}
-        ORDER BY i.item_name ASC
+        ORDER BY i.modified DESC
         LIMIT %(start)s, %(page_length)s
         """,
         {**values, "start": start, "page_length": page_length},
