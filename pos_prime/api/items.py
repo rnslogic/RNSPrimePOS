@@ -421,3 +421,60 @@ def get_item_groups(pos_profile=""):
         limit_page_length=50,
     )
     return [g.name for g in groups]
+
+@frappe.whitelist()
+def create_item(item_data):
+    """Create a new item from POS."""
+    validate_pos_access(None)
+    
+    if isinstance(item_data, str):
+        import json
+        item_data = json.loads(item_data)
+        
+    try:
+        item_group = item_data.get("item_group")
+        if item_group:
+            if not frappe.db.exists("Item Group", item_group):
+                new_group = frappe.new_doc("Item Group")
+                new_group.item_group_name = item_group
+                new_group.parent_item_group = "All Item Groups"
+                new_group.is_group = 0
+                new_group.insert(ignore_permissions=True)
+                
+        brand = item_data.get("brand")
+        if brand:
+            if not frappe.db.exists("Brand", brand):
+                new_brand = frappe.new_doc("Brand")
+                new_brand.brand = brand
+                new_brand.insert(ignore_permissions=True)
+
+        item = frappe.new_doc("Item")
+        item.item_code = item_data.get("item_code")
+        item.item_name = item_data.get("item_name")
+        item.item_group = item_group
+        
+        if brand:
+            item.brand = brand
+            
+        item.stock_uom = item_data.get("uom") or "Nos"
+        item.is_stock_item = 1
+        
+        if item_data.get("purchase_price"):
+            item.valuation_rate = float(item_data.get("purchase_price"))
+            
+        if item_data.get("max_discount"):
+            item.max_discount = float(item_data.get("max_discount"))
+            
+        item.insert(ignore_permissions=True)
+        
+        if item_data.get("selling_price"):
+            price = frappe.new_doc("Item Price")
+            price.item_code = item.name
+            price.price_list = item_data.get("selling_price_list") or "Standard Selling"
+            price.price_list_rate = float(item_data.get("selling_price"))
+            price.insert(ignore_permissions=True)
+            
+        return item.name
+    except Exception as e:
+        frappe.log_error(frappe.get_traceback(), "create_item error")
+        frappe.throw(f"Error creating item: {str(e)}")
