@@ -5,11 +5,20 @@ import { call } from "frappe-ui";
 import { useSettingsStore } from "@/stores/settings";
 import { usePosSessionStore } from "@/stores/posSession";
 import FrappeImage from "@/components/FrappeImage.vue";
-import { Package, Search, X, ArrowUp, ArrowDown } from "lucide-vue-next";
+import { useSwipeToBack } from "@/composables/useSwipeToBack";
+import { Package, Search, X, ArrowUp, ArrowDown, ArrowLeft, ClipboardList } from "lucide-vue-next";
 
 const router = useRouter();
 const settingsStore = useSettingsStore();
 const posSessionStore = usePosSessionStore();
+
+useSwipeToBack("StockDashboard", () => {
+	if (searchTerm.value) {
+		clearSearch();
+		return true;
+	}
+	return false;
+});
 const items = ref<any[]>([]);
 const loading = ref(true);
 const searchTerm = ref("");
@@ -88,18 +97,32 @@ const sortedItems = computed(() => {
 	<div class="h-full flex flex-col bg-gray-50 dark:bg-gray-900 overflow-hidden">
 		<!-- Header -->
 		<header class="bg-white dark:bg-gray-800 shadow-sm sticky top-0 z-10 flex-none border-b border-gray-100 dark:border-gray-700">
-			<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+			<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
 				<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 py-4">
-					<div>
-						<h1
-							class="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2"
+					<div class="flex items-center gap-4">
+						<button
+							@click="router.push({ name: 'StockDashboard' })"
+							class="p-2 -ml-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-colors lg:hidden shrink-0"
 						>
-							<Package class="text-blue-500" :size="24" />
-							{{ __("Items List") }}
-						</h1>
-						<p class="text-xs text-gray-500 dark:text-gray-400 mt-1">
-							{{ __("List of all available items in stock.") }}
-						</p>
+							<ArrowLeft :size="24" />
+						</button>
+						<button
+							@click="router.push({ name: 'StockDashboard' })"
+							class="hidden lg:block p-1.5 -ml-1.5 text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 transition-colors bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700 rounded-md shrink-0"
+						>
+							<ArrowLeft :size="18" />
+						</button>
+						<div class="flex items-start gap-2 sm:gap-3">
+							<ClipboardList class="text-blue-500 mt-0.5" :size="24" />
+							<div>
+								<h1 class="text-xl font-bold text-gray-900 dark:text-white">
+									{{ __("Stock List") }}
+								</h1>
+								<p class="text-xs text-gray-500 dark:text-gray-400 mt-1 sm:mt-1.5">
+									{{ __("List of all available items in stock.") }}
+								</p>
+							</div>
+						</div>
 					</div>
 					
 					<div class="relative max-w-sm w-full">
@@ -111,9 +134,8 @@ const sortedItems = computed(() => {
 							type="text"
 							v-model="searchTerm"
 							@input="onSearchInput"
-							@keydown.esc="clearSearch"
 							:placeholder="__('Search items...')"
-							class="w-full pl-10 pr-10 py-2 border border-gray-200 dark:border-gray-700 rounded-xl bg-gray-50 dark:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-sm transition-all"
+							class="w-full pl-10 pr-10 py-2 border border-gray-200 dark:border-gray-700 rounded-xl bg-gray-50 dark:bg-gray-900 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 text-sm transition-colors"
 						/>
 						<button
 							v-if="searchTerm"
@@ -128,17 +150,16 @@ const sortedItems = computed(() => {
 			</div>
 		</header>
 		<main class="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8">
-			<div class="max-w-7xl mx-auto">
+			<div class="max-w-6xl mx-auto space-y-6">
 				<div
 					class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden"
 				>
 					<div class="overflow-x-auto">
 						<table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
 							<thead
-								class="text-xs text-gray-700 uppercase bg-white dark:bg-gray-800 dark:text-gray-300 border-b border-gray-200 dark:border-gray-700"
+								class="text-xs text-gray-700 uppercase bg-gray-50/50 dark:bg-gray-800/50 dark:text-gray-300 border-b border-gray-200 dark:border-gray-700"
 							>
 								<tr>
-									<th scope="col" class="px-6 py-4 w-16"></th>
 									<th scope="col" class="px-6 py-4 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors select-none" @click="sortBy('item_code')">
 										<div class="flex items-center gap-1">
 											{{ __("Item Code") }}
@@ -158,6 +179,13 @@ const sortedItems = computed(() => {
 											{{ __("Item Group") }}
 											<ArrowUp v-if="sortColumn === 'item_group' && sortOrder === 'asc'" class="w-4 h-4 text-blue-500" />
 											<ArrowDown v-if="sortColumn === 'item_group' && sortOrder === 'desc'" class="w-4 h-4 text-blue-500" />
+										</div>
+									</th>
+									<th scope="col" class="px-6 py-4 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors select-none" @click="sortBy('brand')">
+										<div class="flex items-center gap-1">
+											{{ __("Brand") }}
+											<ArrowUp v-if="sortColumn === 'brand' && sortOrder === 'asc'" class="w-4 h-4 text-blue-500" />
+											<ArrowDown v-if="sortColumn === 'brand' && sortOrder === 'desc'" class="w-4 h-4 text-blue-500" />
 										</div>
 									</th>
 									<th scope="col" class="px-6 py-4 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors select-none" @click="sortBy('stock_uom')">
@@ -206,20 +234,6 @@ const sortedItems = computed(() => {
 									:key="item.item_code"
 									class="odd:bg-gray-50 even:bg-white dark:odd:bg-gray-800/50 dark:even:bg-gray-800 border-b dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700/50 transition-colors cursor-pointer"
 								>
-									<td class="px-6 py-2">
-										<FrappeImage
-											v-if="item.image"
-											:src="item.image"
-											:alt="item.item_name"
-											class="w-10 h-10 object-contain rounded-md"
-										/>
-										<div
-											v-else
-											class="w-10 h-10 bg-gray-100 dark:bg-gray-700 rounded-md flex items-center justify-center text-gray-400"
-										>
-											<Package :size="16" />
-										</div>
-									</td>
 									<td class="px-6 py-4 font-mono text-xs text-gray-500 dark:text-gray-400">
 										{{ item.item_code }}
 									</td>
@@ -230,6 +244,12 @@ const sortedItems = computed(() => {
 										<span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300">
 											{{ item.item_group }}
 										</span>
+									</td>
+									<td class="px-6 py-4">
+										<span v-if="item.brand" class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300 border border-blue-100 dark:border-blue-800">
+											{{ item.brand }}
+										</span>
+										<span v-else class="text-gray-400 dark:text-gray-600">-</span>
 									</td>
 									<td class="px-6 py-4">
 										{{ item.stock_uom }}
