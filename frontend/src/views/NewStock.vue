@@ -4,7 +4,7 @@ import { useRouter } from "vue-router";
 import { call } from "frappe-ui";
 import { usePosSessionStore } from "@/stores/posSession";
 import { useSwipeToBack } from "@/composables/useSwipeToBack";
-import { ArrowLeft, PackagePlus, Save, X } from "lucide-vue-next";
+import { ArrowLeft, PackagePlus, Save, X, ChevronDown } from "lucide-vue-next";
 
 const router = useRouter();
 const posSessionStore = usePosSessionStore();
@@ -274,15 +274,18 @@ async function submitItem() {
 						<!-- Item Group -->
 						<div class="relative">
 							<label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">{{ __("Item Group") }} <span class="text-red-500">*</span></label>
-							<input
-								v-model="form.item_group"
-								@focus="showGroupDropdown = true; showBrandDropdown = false; activeGroupIndex = -1"
-								@blur="handleGroupBlur"
-								@keydown="handleGroupKeydown"
-								type="text"
-								class="bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 text-gray-900 dark:text-white text-sm rounded-xl focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 block w-full p-3 transition-colors"
-								:placeholder="__('e.g. Mobile')"
-							/>
+							<div class="relative">
+								<input
+									v-model="form.item_group"
+									@focus="showGroupDropdown = true; showBrandDropdown = false; activeGroupIndex = -1"
+									@blur="handleGroupBlur"
+									@keydown="handleGroupKeydown"
+									type="text"
+									class="bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 text-gray-900 dark:text-white text-sm rounded-xl focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 block w-full p-3 pr-10 transition-colors"
+									:placeholder="__('e.g. Mobile')"
+								/>
+								<ChevronDown class="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+							</div>
 							<ul
 								v-if="showGroupDropdown && filteredGroups.length > 0"
 								class="absolute z-10 w-full mt-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-lg max-h-60 overflow-y-auto py-1 text-sm text-gray-800 dark:text-gray-200"
@@ -302,15 +305,18 @@ async function submitItem() {
 						<!-- Brand -->
 						<div class="relative">
 							<label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">{{ __("Brand") }}</label>
-							<input
-								v-model="form.brand"
-								@focus="showBrandDropdown = true; showGroupDropdown = false; activeBrandIndex = -1"
-								@blur="handleBrandBlur"
-								@keydown="handleBrandKeydown"
-								type="text"
-								class="bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 text-gray-900 dark:text-white text-sm rounded-xl focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 block w-full p-3 transition-colors"
-								:placeholder="__('e.g. Google')"
-							/>
+							<div class="relative">
+								<input
+									v-model="form.brand"
+									@focus="showBrandDropdown = true; showGroupDropdown = false; activeBrandIndex = -1"
+									@blur="handleBrandBlur"
+									@keydown="handleBrandKeydown"
+									type="text"
+									class="bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 text-gray-900 dark:text-white text-sm rounded-xl focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 block w-full p-3 pr-10 transition-colors"
+									:placeholder="__('e.g. Google')"
+								/>
+								<ChevronDown class="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+							</div>
 							<ul
 								v-if="showBrandDropdown && filteredBrands.length > 0"
 								class="absolute z-10 w-full mt-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-lg max-h-60 overflow-y-auto py-1 text-sm text-gray-800 dark:text-gray-200"
