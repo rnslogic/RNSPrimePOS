@@ -97,7 +97,8 @@ def get_items(
         SELECT
             i.item_code, i.item_name, i.description, i.item_group,
             i.stock_uom, i.image, i.has_batch_no, i.has_serial_no,
-            i.is_stock_item, i.brand, i.weight_per_unit, i.weight_uom
+            i.is_stock_item, i.brand, i.weight_per_unit, i.weight_uom,
+            i.valuation_rate, i.max_discount
         FROM `tabItem` i
         {join_clause}
         WHERE {where}

@@ -202,6 +202,20 @@ const sortedItems = computed(() => {
 											<ArrowDown v-if="sortColumn === 'actual_qty' && sortOrder === 'desc'" class="w-4 h-4 text-blue-500" />
 										</div>
 									</th>
+									<th scope="col" class="px-6 py-4 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors select-none text-right" @click="sortBy('valuation_rate')">
+										<div class="flex items-center justify-end gap-1">
+											{{ __("Purchase Price") }}
+											<ArrowUp v-if="sortColumn === 'valuation_rate' && sortOrder === 'asc'" class="w-4 h-4 text-blue-500" />
+											<ArrowDown v-if="sortColumn === 'valuation_rate' && sortOrder === 'desc'" class="w-4 h-4 text-blue-500" />
+										</div>
+									</th>
+									<th scope="col" class="px-6 py-4 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors select-none text-right" @click="sortBy('max_discount')">
+										<div class="flex items-center justify-end gap-1">
+											{{ __("Max Discount") }}
+											<ArrowUp v-if="sortColumn === 'max_discount' && sortOrder === 'asc'" class="w-4 h-4 text-blue-500" />
+											<ArrowDown v-if="sortColumn === 'max_discount' && sortOrder === 'desc'" class="w-4 h-4 text-blue-500" />
+										</div>
+									</th>
 									<th scope="col" class="px-6 py-4 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors select-none text-right" @click="sortBy('rate')">
 										<div class="flex items-center justify-end gap-1">
 											{{ __("Price") }}
@@ -213,7 +227,7 @@ const sortedItems = computed(() => {
 							</thead>
 							<tbody>
 								<tr v-if="loading">
-									<td colspan="7" class="px-6 py-12 text-center text-gray-500">
+									<td colspan="9" class="px-6 py-12 text-center text-gray-500">
 										<span
 											class="animate-spin w-8 h-8 border-4 border-blue-500/20 border-t-blue-500 rounded-full inline-block"
 										></span>
@@ -221,7 +235,7 @@ const sortedItems = computed(() => {
 									</td>
 								</tr>
 								<tr v-else-if="items.length === 0">
-									<td colspan="7" class="px-6 py-12 text-center text-gray-500">
+									<td colspan="9" class="px-6 py-12 text-center text-gray-500">
 										<Package
 											class="mx-auto mb-3 text-gray-300"
 											:size="32"
@@ -258,6 +272,12 @@ const sortedItems = computed(() => {
 										:class="item.actual_qty > 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-500 dark:text-red-400'"
 									>
 										{{ item.actual_qty || 0 }}
+									</td>
+									<td class="px-6 py-4 text-right font-medium text-gray-500 dark:text-gray-400">
+										{{ formatCurrency(item.valuation_rate || 0) }}
+									</td>
+									<td class="px-6 py-4 text-right font-medium text-orange-600 dark:text-orange-400">
+										{{ item.max_discount ? item.max_discount + '%' : '-' }}
 									</td>
 									<td
 										class="px-6 py-4 text-right font-bold text-gray-900 dark:text-white"
